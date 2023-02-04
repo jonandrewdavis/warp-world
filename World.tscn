@@ -73,6 +73,27 @@ polygon = PackedVector2Array(330, 203, 330, 203, 365, 207, 365, 207, 362, 166, 3
 position = Vector2(476, 226)
 shape = SubResource("CapsuleShape2D_scx4j")
 
+[node name="CollisionPolygon2D6" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
+polygon = PackedVector2Array(481, 339, 464, 352, 469, 368, 487, 361)
+
+[node name="CollisionPolygon2D7" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
+polygon = PackedVector2Array(471, 407, 468, 426, 478, 436, 487, 418)
+
+[node name="CollisionPolygon2D8" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
+polygon = PackedVector2Array(410, 243, 405, 227, 407, 214, 425, 222)
+
+[node name="CollisionPolygon2D9" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
+polygon = PackedVector2Array(645, 140, 587, 143, 587, 171, 648, 176)
+
+[node name="CollisionPolygon2D10" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
+polygon = PackedVector2Array(644, 112, 598, 113, 595, 73, 633, 72, 646, 109)
+
+[node name="CollisionPolygon2D11" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
+polygon = PackedVector2Array(548, 237, 525, 238, 527, 272, 552, 274)
+
+[node name="CollisionPolygon2D12" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
+polygon = PackedVector2Array(-20, -20, -20, 682, 1191, 680, 1188, -18, -12, -20, 77, -58, 1209, -44, 1231, 720, -45, 702, -68, -40)
+
 [node name="Network" parent="." instance=ExtResource("3_q7ekw")]
 metadata/_edit_lock_ = true
 
