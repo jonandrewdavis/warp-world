@@ -23,6 +23,7 @@ func call_delayed(callable, delay):
 	get_tree().create_timer(delay, false).connect("timeout", callable)
 
 func _enter_tree():
+	print('DEBUG: enter tree', name)
 	set_multiplayer_authority(str(name).to_int())
 
 # This is very important for giving each player a camera & control over that camera.
@@ -68,7 +69,7 @@ func _physics_process(delta):
 	move_and_slide()
 
 
-func _unhandled_input(event):
+func _unhandled_input(_event):
 	if not is_multiplayer_authority(): return
 	if health <= 0: return
 	if Input.is_action_just_pressed("click"):

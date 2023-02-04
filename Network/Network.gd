@@ -16,6 +16,7 @@ func _unhandled_input(_event):
 
 func _on_join_pressed():
 	main_menu.hide()
+	print('DEBUG:', address_entry.text)
 	enet_peer.create_client(address_entry.text, PORT)
 	multiplayer.multiplayer_peer = enet_peer
 
@@ -30,10 +31,11 @@ func _on_host_pressed():
 	
 	add_player(multiplayer.get_unique_id())
 	
-	# upnp_setup()
+	upnp_setup()
 
 
 func add_player(peer_id):
+	print('DEBUG: add player')
 	var player = Player.instantiate()
 	player.name = str(peer_id)
 	get_parent().add_child(player)
@@ -51,7 +53,7 @@ func _on_multiplayer_spawner_spawned(node):
 
 # I'm going to make this unsed for now. You can call it with: upnp_setup()
 # Reasoning: I want a dedicated server for my friends, instead of UPNP, but UPNP
-func _upnp_setup():
+func upnp_setup():
 	var upnp = UPNP.new()
 	
 	var discover_result = upnp.discover()

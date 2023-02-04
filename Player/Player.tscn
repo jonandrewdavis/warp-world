@@ -4,11 +4,11 @@
 [ext_resource type="Texture2D" uid="uid://cheq73fqqobpu" path="res://Assets/0x72_DungeonTilesetII_v1.4.png" id="2_wxkwm"]
 [ext_resource type="Texture2D" uid="uid://fbkh4kpt0vok" path="res://Assets/weapon_regular_sword.png" id="4_1d428"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_wnh1r"]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_vjuba"]
 radius = 5.0
 height = 14.0
 
-[sub_resource type="Animation" id="Animation_jaq6g"]
+[sub_resource type="Animation" id="Animation_rnh2n"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -23,7 +23,7 @@ tracks/0/keys = {
 "values": [3]
 }
 
-[sub_resource type="Animation" id="Animation_eg55o"]
+[sub_resource type="Animation" id="Animation_rn003"]
 resource_name = "death"
 length = 2.0
 tracks/0/type = "value"
@@ -39,7 +39,7 @@ tracks/0/keys = {
 "values": [75, 80, 75, 74]
 }
 
-[sub_resource type="Animation" id="Animation_edq71"]
+[sub_resource type="Animation" id="Animation_xgi6g"]
 resource_name = "idle"
 loop_mode = 1
 step = 0.2
@@ -56,7 +56,7 @@ tracks/0/keys = {
 "values": [72, 73]
 }
 
-[sub_resource type="Animation" id="Animation_xjei3"]
+[sub_resource type="Animation" id="Animation_uexw8"]
 resource_name = "walk"
 length = 0.8
 loop_mode = 1
@@ -74,15 +74,15 @@ tracks/0/keys = {
 "values": [79, 76, 77, 78]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_utbnu"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_78t4w"]
 _data = {
-"RESET": SubResource("Animation_jaq6g"),
-"death": SubResource("Animation_eg55o"),
-"idle": SubResource("Animation_edq71"),
-"walk": SubResource("Animation_xjei3")
+"RESET": SubResource("Animation_rnh2n"),
+"death": SubResource("Animation_rn003"),
+"idle": SubResource("Animation_xgi6g"),
+"walk": SubResource("Animation_uexw8")
 }
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ktek4"]
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_authn"]
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
 properties/0/sync = true
@@ -102,11 +102,11 @@ properties/5/path = NodePath("Sheathe:scale")
 properties/5/spawn = true
 properties/5/sync = true
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_qjaex"]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_rhb7i"]
 radius = 3.0
 height = 20.0
 
-[sub_resource type="Animation" id="Animation_5wloh"]
+[sub_resource type="Animation" id="Animation_4glje"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -121,7 +121,7 @@ tracks/0/keys = {
 "values": [0.0]
 }
 
-[sub_resource type="Animation" id="Animation_mad4g"]
+[sub_resource type="Animation" id="Animation_tok22"]
 resource_name = "swing1"
 step = 0.2
 tracks/0/type = "value"
@@ -149,16 +149,16 @@ tracks/1/keys = {
 "values": [false, false, true]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_es13e"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_o31w1"]
 _data = {
-"RESET": SubResource("Animation_5wloh"),
-"swing1": SubResource("Animation_mad4g")
+"RESET": SubResource("Animation_4glje"),
+"swing1": SubResource("Animation_tok22")
 }
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v48bg"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x4dh4"]
 bg_color = Color(0.541176, 0.105882, 0.192157, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v47hs"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jekob"]
 bg_color = Color(0.254902, 0.588235, 0.305882, 1)
 
 [node name="Player" type="CharacterBody2D"]
@@ -175,16 +175,16 @@ region_rect = Rect2(128, 66, 143, 32)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 8)
-shape = SubResource("CapsuleShape2D_wnh1r")
+shape = SubResource("CapsuleShape2D_vjuba")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "idle"
 libraries = {
-"": SubResource("AnimationLibrary_utbnu")
+"": SubResource("AnimationLibrary_78t4w")
 }
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_ktek4")
+replication_config = SubResource("SceneReplicationConfig_authn")
 
 [node name="PlayerCameraRemote" type="RemoteTransform2D" parent="."]
 
@@ -200,12 +200,12 @@ texture = ExtResource("4_1d428")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Sheathe/Weapon"]
 position = Vector2(0, -9)
-shape = SubResource("CapsuleShape2D_qjaex")
+shape = SubResource("CapsuleShape2D_rhb7i")
 disabled = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sheathe/Weapon"]
 libraries = {
-"": SubResource("AnimationLibrary_es13e")
+"": SubResource("AnimationLibrary_o31w1")
 }
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
@@ -213,8 +213,8 @@ offset_left = -7.0
 offset_top = -15.0
 offset_right = 7.0
 offset_bottom = -12.0
-theme_override_styles/background = SubResource("StyleBoxFlat_v48bg")
-theme_override_styles/fill = SubResource("StyleBoxFlat_v47hs")
+theme_override_styles/background = SubResource("StyleBoxFlat_x4dh4")
+theme_override_styles/fill = SubResource("StyleBoxFlat_jekob")
 max_value = 3.0
 value = 3.0
 rounded = true
