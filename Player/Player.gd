@@ -1,14 +1,14 @@
 extends CharacterBody2D
 
-signal health_changed(health_value)
-
 const Camera = preload("res://Network/CameraBase.tscn")
+
 @onready var main = get_tree().get_root().get_node('Main')
 @onready var sprite = $Sprite2D
 @onready var weaponAnimate = $Sheathe/Weapon/AnimationPlayer
 # weapon may want to send it's own stuff...
 # @onready var weapon = $Weapon
-@onready var sheathe = $Sheathe
+# Sheath is where the "Weapon" is located, so we can flip it easily.
+@onready var sheathe = $Sheathe 
 @onready var healthBar = $ProgressBar
 
 @export var ACCELERATION = 500
@@ -25,6 +25,8 @@ func call_delayed(callable, delay):
 func _enter_tree():
 	set_multiplayer_authority(str(name).to_int())
 
+# This is very important for giving each player a camera & control over that camera.
+# I figured this out by my self. smile.
 func _ready():
 	if not is_multiplayer_authority(): return
 	var new_camera = Camera.instantiate()
@@ -75,9 +77,10 @@ func _unhandled_input(event):
 
 func _on_weapon_body_entered(body):
 	if not is_multiplayer_authority(): return
-	# TODO: check if its a payer.
+	# TODO: check if its a player.
 	if body.has_method('on_damage'):
 		body.on_damage.rpc_id(body.get_multiplayer_authority())
+
 
 # needs a lot of work
 func respawn():
@@ -86,12 +89,10 @@ func respawn():
 	$CollisionShape2D.set_disabled(false)
 	position = Vector2(0 + randf()*450,0 + randf()*450)
 	
+	
 @rpc("any_peer")
 func on_damage():
 	health -= 1
-	# health_changed.emit(health)
 	healthBar.value = health
 	if health <= 0:
 		call_delayed(respawn, 2.8)
-
-# func update_health_bar(health_value):

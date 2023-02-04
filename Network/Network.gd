@@ -10,23 +10,18 @@ const PORT = 9999
 var enet_peer = ENetMultiplayerPeer.new()
 
 # if you capture mouse, you've gotta have this
-func _unhandled_input(event):
+func _unhandled_input(_event):
 	if Input.is_action_just_pressed("escape"):
 		get_tree().quit()
 
 func _on_join_pressed():
 	main_menu.hide()
-	# hud.show()
-	print('addy',address_entry.text)
 	enet_peer.create_client(address_entry.text, PORT)
-	print('peer',enet_peer)
-	print('host', enet_peer.get_host())
 	multiplayer.multiplayer_peer = enet_peer
 
 
 func _on_host_pressed():
 	main_menu.hide()
-	# hud.show()
 
 	enet_peer.create_server(PORT)
 	multiplayer.multiplayer_peer = enet_peer
@@ -35,11 +30,10 @@ func _on_host_pressed():
 	
 	add_player(multiplayer.get_unique_id())
 	
-	upnp_setup()
+	# upnp_setup()
 
 
 func add_player(peer_id):
-	print('im peer id', peer_id)
 	var player = Player.instantiate()
 	player.name = str(peer_id)
 	get_parent().add_child(player)
@@ -50,14 +44,14 @@ func remove_player(peer_id):
 	if player:
 		player.queue_free()
 
-func update_health_bar(health_value):
-	pass
-	# health_bar.value = health_value
-
 func _on_multiplayer_spawner_spawned(node):
 	print('spawned', node)
 
-func upnp_setup():
+
+
+# I'm going to make this unsed for now. You can call it with: upnp_setup()
+# Reasoning: I want a dedicated server for my friends, instead of UPNP, but UPNP
+func _upnp_setup():
 	var upnp = UPNP.new()
 	
 	var discover_result = upnp.discover()
