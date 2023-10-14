@@ -6,3 +6,7 @@
 
 [node name="World" parent="." instance=ExtResource("1_y72ed")]
 metadata/_edit_lock_ = true
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://Player/Player.tscn")
+spawn_path = NodePath("../World")

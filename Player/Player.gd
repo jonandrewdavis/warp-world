@@ -1,99 +1,139 @@
 extends CharacterBody2D
 
-const Camera = preload("res://Network/CameraBase.tscn")
+var current_weapon: Node2D
 
-@onready var main = get_tree().get_root().get_node('Main')
-@onready var sprite = $Sprite2D
-@onready var weaponAnimate = $Sheathe/Weapon/AnimationPlayer
-# weapon may want to send it's own stuff...
-# @onready var weapon = $Weapon
-# Sheath is where the "Weapon" is located, so we can flip it easily.
-@onready var sheathe = $Sheathe 
-@onready var healthBar = $ProgressBar
+@export var max_hp: int = 3
+@export var hp: int = 3 
+@export var FRICTION: int = 500
+@export var acceleration = 500
+@export var max_speed = 100
 
-@export var ACCELERATION = 500
-@export var MIN_SPEED = 15
-@export var MAX_SPEED = 70
-@export var FRICTION = 500
+@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var state_machine: Node = get_node("FiniteStateMachine")
+@onready var animated_sprite: AnimatedSprite2D = get_node("AnimatedSprite2D")
+@onready var mov_direction: Vector2 = Vector2.ZERO
 
-var health = 5 
+@onready var userlabel = $Label
+@onready var world = get_parent()
 
-# TODO: move this into the global imports, like the signal function
-func call_delayed(callable, delay):
-	get_tree().create_timer(delay, false).connect("timeout", callable)
+# var UI = preload("res://UI/UI.tscn")
+var UIref = null
+
+var mouse_direction: Vector2
+
+const PLAYER_MAX_CONST = 80
+const RESPAWN_RADIUS = 75
+var PLAYER_START: Vector2 = Vector2(-0, 10)
 
 func _enter_tree():
-	print('DEBUG: enter tree', name)
 	set_multiplayer_authority(str(name).to_int())
 
-# This is very important for giving each player a camera & control over that camera.
-# I figured this out by my self. smile.
-func _ready():
+func _ready() -> void:
+	# NOTE: This `not is_multiplayer_authority()` check 
+	# assures that code runs only on the client.
+	# All nodes within these are LOCAL only. Camera, Inventory, UI, etc.
+	# TODO: Move `userlabel.text` above this line and remove from sync
 	if not is_multiplayer_authority(): return
-	var new_camera = Camera.instantiate()
-	var remote = $PlayerCameraRemote
-	new_camera.set_multiplayer_authority(str(name).to_int())
-	remote.set_multiplayer_authority(str(name).to_int())
-	main.add_child(new_camera)
-	remote.set_remote_node(main.get_node('CameraBase').get_path())
-	respawn()
+	var newCamera = Camera2D.new()
+	# var newUI = UI.instantiate()
+	userlabel.text = SavedData.username
+	# All local. Weapons are in /Weapons, so those exist on server, and need to.
+	# emit_signal("weapon_picked_up", weapons.get_child(0).get_texture())
+	newCamera.ignore_rotation = true
+	newCamera.limit_smoothed = true
+	add_child(newCamera)
+	# add_child(newUI)
+	# UIref = get_node("UI")
+	_restore_previous_state()
 	
-func _physics_process(delta):
-	if not is_multiplayer_authority(): return
-	if health <= 0:
-		$CollisionShape2D.set_disabled(true)
-		$AnimationPlayer.play('death')
-		return
-	
-	var input_vector = Vector2.ZERO
-	input_vector.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
-	input_vector.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
-	input_vector = input_vector.normalized()
+func is_player():
+	return true
 
-	if input_vector != Vector2.ZERO:
-		if input_vector.x > 0:
-			sheathe.scale.x = 1
-			sprite.flip_h = false
-		else:
-			sheathe.scale.x = -1
-			sprite.flip_h = true
-		$AnimationPlayer.play("walk")
-		if Input.is_action_pressed('shift'):
-			velocity = velocity.move_toward(input_vector * (MAX_SPEED * 1.7), ACCELERATION * delta)
-		else: 
-			velocity = velocity.move_toward(input_vector * MAX_SPEED, ACCELERATION * delta)
+func _physics_process(delta: float) -> void:
+	if mov_direction != Vector2.ZERO:
+		velocity = velocity.move_toward(mov_direction * max_speed, acceleration * delta)
 	else:
-		$AnimationPlayer.play("idle")
 		velocity = velocity.move_toward(Vector2.ZERO, FRICTION * delta)
 
+func move() -> void:
 	move_and_slide()
+	
+# take_damage drives a lot of logic
+# source is from HitBox on enemies or on weapon
+func take_damage(dam: int, dir: Vector2, force: int) -> void:
+	if state_machine.state != state_machine.states.dead:
+		hp -= dam
+		velocity += dir * force
+		if hp > 0:
+			state_machine.set_state(state_machine.states.hurt)
+		else:
+			state_machine.set_state(state_machine.states.dead)
+		_spawn_hit_effect()
 
+func take_knockback(_dam: int, dir: Vector2, force: int) -> void:
+		velocity += dir * force
+
+func _spawn_hit_effect() -> void:
+	pass
+
+func _restore_previous_state() -> void:
+	max_hp = 5
+	hp = 5
+	max_speed = PLAYER_MAX_CONST
+	if self.name == str(1):
+		PLAYER_START = Vector2.ZERO
+	if randi() % 2 == 0:
+		position = Vector2(PLAYER_START.x + randf() * RESPAWN_RADIUS, PLAYER_START.y + randf() * RESPAWN_RADIUS)
+	else: 
+		position = Vector2(PLAYER_START.x - randf() * RESPAWN_RADIUS, PLAYER_START.y - randf() * RESPAWN_RADIUS)
+	state_machine.set_state(state_machine.states.idle)
+
+func _process(_delta: float) -> void:
+	if not is_multiplayer_authority(): return
+	
+	mouse_direction = (get_global_mouse_position() - global_position).normalized()
+	
+	if mouse_direction.x > 0 and animated_sprite.flip_h:
+		animated_sprite.flip_h = false
+	elif mouse_direction.x < 0 and not animated_sprite.flip_h:
+		animated_sprite.flip_h = true
+		
+	# current_weapon.move(mouse_direction)
 
 func _unhandled_input(_event):
 	if not is_multiplayer_authority(): return
-	if health <= 0: return
-	if Input.is_action_just_pressed("click"):
-		weaponAnimate.play("swing1")
-		
+	if Input.is_action_just_pressed("escape"):
+		pass
 
-func _on_weapon_body_entered(body):
+func get_input() -> void:
 	if not is_multiplayer_authority(): return
-	# TODO: check if its a player.
-	if body.has_method('on_damage'):
-		body.on_damage.rpc_id(body.get_multiplayer_authority())
-
-
-# needs a lot of work
-func respawn():
-	health = 3
-	healthBar.value = health
-	$CollisionShape2D.set_disabled(false)
-	position = Vector2(0 + randf()*450,0 + randf()*450)
+		
+	mov_direction = Vector2.ZERO
+	mov_direction.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
+	mov_direction.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
+	mov_direction = mov_direction.normalized()
 	
+func cancel_attack() -> void:
+	pass
+#	current_weapon.cancel_attack()
 	
-@rpc("any_peer")
-func on_damage():
-	health -= 1
-	healthBar.value = health
-	if health <= 0:
-		call_delayed(respawn, 2.8)
+func respawn() -> void:
+	delay_loot(global_position)
+	_restore_previous_state()
+
+func delay_loot(new_pos):
+	pass
+
+func interact(): 
+	# Look for interactable bodies,
+	# pick closest
+	pass
+
+# TODO: This should be emit, (signal up)
+func player_pvp(value):
+	if value == true:
+		userlabel.add_theme_color_override("font_color", Color(1,0,0))
+	else:
+		userlabel.remove_theme_color_override("font_color")
+	self.set_collision_layer_value(6, value)
+

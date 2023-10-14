@@ -1,102 +1,19 @@
-[gd_scene load_steps=6 format=3 uid="uid://bkd34gv2qo74h"]
+[gd_scene load_steps=3 format=3 uid="uid://bkd34gv2qo74h"]
 
 [ext_resource type="Texture2D" uid="uid://b2hieifim6jb1" path="res://Assets/TX Tileset Grass.png" id="1_f0ste"]
-[ext_resource type="Texture2D" uid="uid://bs8yjpy4iop15" path="res://Assets/TX Props.png" id="2_pnnic"]
 [ext_resource type="PackedScene" uid="uid://3s30xhs7xn4c" path="res://Network/Network.tscn" id="3_q7ekw"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_wjd0c"]
-size = Vector2(28.5, 44)
-
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_scx4j"]
 
 [node name="World" type="Node2D"]
 
-[node name="Node2D" type="Node2D" parent="."]
+[node name="Floor" type="Node2D" parent="."]
 
-[node name="TextureRect" type="TextureRect" parent="Node2D"]
+[node name="TextureRect" type="TextureRect" parent="Floor"]
 offset_left = -20.0
 offset_top = -20.0
 offset_right = 1190.0
 offset_bottom = 682.0
 texture = ExtResource("1_f0ste")
 stretch_mode = 1
-metadata/_edit_lock_ = true
-
-[node name="TextureRect2" type="TextureRect" parent="Node2D"]
-offset_left = 300.0
-offset_top = 54.0
-offset_right = 812.0
-offset_bottom = 566.0
-texture = ExtResource("2_pnnic")
-metadata/_edit_lock_ = true
-
-[node name="Area2D" type="StaticBody2D" parent="Node2D"]
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="Node2D/Area2D"]
-position = Vector2(476, 95.25)
-shape = SubResource("RectangleShape2D_wjd0c")
-
-[node name="CollisionShape2D3" type="CollisionShape2D" parent="Node2D/Area2D"]
-position = Vector2(348, 97)
-shape = SubResource("RectangleShape2D_wjd0c")
-
-[node name="CollisionShape2D4" type="CollisionShape2D" parent="Node2D/Area2D"]
-position = Vector2(603, 245)
-shape = SubResource("RectangleShape2D_wjd0c")
-
-[node name="CollisionShape2D5" type="CollisionShape2D" parent="Node2D/Area2D"]
-position = Vector2(540, 92.625)
-shape = SubResource("RectangleShape2D_wjd0c")
-
-[node name="CollisionShape2D6" type="CollisionShape2D" parent="Node2D/Area2D"]
-position = Vector2(1145, 423)
-shape = SubResource("RectangleShape2D_wjd0c")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="Node2D"]
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
-polygon = PackedVector2Array(401, 136, 396, 178, 428, 176, 425, 148)
-
-[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
-polygon = PackedVector2Array(464, 141, 463, 177, 487, 177, 488, 143)
-
-[node name="CollisionPolygon2D3" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
-polygon = PackedVector2Array(527, 146, 527, 210, 551, 206, 551, 147, 551, 147)
-
-[node name="CollisionPolygon2D4" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
-polygon = PackedVector2Array(396, 88, 426, 90, 426, 114, 396, 114, 395, 86)
-
-[node name="CollisionPolygon2D5" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
-polygon = PackedVector2Array(330, 203, 330, 203, 365, 207, 365, 207, 362, 166, 362, 166, 332, 167, 332, 167)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Node2D/StaticBody2D"]
-position = Vector2(476, 226)
-shape = SubResource("CapsuleShape2D_scx4j")
-
-[node name="CollisionPolygon2D6" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
-polygon = PackedVector2Array(481, 339, 464, 352, 469, 368, 487, 361)
-
-[node name="CollisionPolygon2D7" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
-polygon = PackedVector2Array(471, 407, 468, 426, 478, 436, 487, 418)
-
-[node name="CollisionPolygon2D8" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
-polygon = PackedVector2Array(410, 243, 405, 227, 407, 214, 425, 222)
-
-[node name="CollisionPolygon2D9" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
-polygon = PackedVector2Array(645, 140, 587, 143, 587, 171, 648, 176)
-
-[node name="CollisionPolygon2D10" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
-polygon = PackedVector2Array(644, 112, 598, 113, 595, 73, 633, 72, 646, 109)
-
-[node name="CollisionPolygon2D11" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
-polygon = PackedVector2Array(548, 237, 525, 238, 527, 272, 552, 274)
-
-[node name="CollisionPolygon2D12" type="CollisionPolygon2D" parent="Node2D/StaticBody2D"]
-polygon = PackedVector2Array(-20, -20, -20, 682, 1191, 680, 1188, -18, -12, -20, 77, -58, 1209, -44, 1231, 720, -45, 702, -68, -40)
 
 [node name="Network" parent="." instance=ExtResource("3_q7ekw")]
 metadata/_edit_lock_ = true
-
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://Player/Player.tscn")
-spawn_path = NodePath("..")
